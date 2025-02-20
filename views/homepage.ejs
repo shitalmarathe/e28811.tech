@@ -12,21 +12,27 @@
           Release your research papers for free online using our interactive
           dashboard.
         </p>
-        
+
         <form action="/register" method="POST">
           <fieldset>
             <legend>Sign Up</legend>
   
             <label for="username">Username</label>
-            <input type="text" id="username" name="username" autocomplete="off" />
+            <input
+            name="username"
+            type="text"
+            id="username"
+            autocomplete="off"
+            required/>
             <br />
   
             <label for="password">Password</label>
             <input
+              name="password"
               type="password"
               id="password"
-              name="password"
-              autocomplete="off"
+             autocomplete="off"
+              required
             />
             <br />
   
