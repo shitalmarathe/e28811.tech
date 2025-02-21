@@ -1,47 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-  <%- include('includes/head')%>
- 
+  <%- include('includes/head') %>
   <body>
+    <%- include('includes/header') %>
 
-    <%- include('includes/header')%>
+    <main>
+      <h1>Welcome to e28811</h1>
+      <p>Create a new account to release research papers.</p>
 
-      <main>
-        <h1>Welcome to e28811</h1>
-        <p>
-          Release your research papers for free online using our interactive
-          dashboard.
-        </p>
+      <% if(errors.length > 0) { %>
+      <p><mark style="background: tomato">Errors</mark></p>
+      <ul>
+        <% errors.forEach((error) => { %>
+        <li><%= error %></li>
+        <% }) %>
+      </ul>
+      <% } %>
 
-        <form action="/register" method="POST">
-          <fieldset>
-            <legend>Sign Up</legend>
-  
-            <label for="username">Username</label>
-            <input
+      <form action="/register" method="POST">
+        <fieldset>
+          <legend>Sign Up</legend>
+
+          <label for="username">Username</label>
+          <input
             name="username"
             type="text"
             id="username"
             autocomplete="off"
-            required/>
-            <br />
-  
-            <label for="password">Password</label>
-            <input
-              name="password"
-              type="password"
-              id="password"
-             autocomplete="off"
-              required
-            />
-            <br />
-  
-            <button type="submit">Sign Up</button>
-          </fieldset>
-        </form>
-      </main>
+            required
+          />
+          <br />
 
-      <%- include('includes/footer')%>
- 
+          <label for="password">Password</label>
+          <input
+            name="password"
+            type="password"
+            id="password"
+            autocomplete="off"
+            required
+          />
+          <br />
+
+          <button type="submit">Sign Up</button>
+        </fieldset>
+      </form>
+    </main>
+
+    <%- include('includes/footer') %>
   </body>
 </html>
