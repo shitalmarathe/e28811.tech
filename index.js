@@ -88,7 +88,13 @@ app.post("/register", (req, res) => {
     return res.render("homepage", { errors });
   }
 
-  users[username] = password;
+
+// Add the user to our database
+const statement = db.prepare(
+  `INSERT INTO users (username, password) VALUES (?, ?)`
+);
+statement.run(username, password);
+
  
 return res.send(`Thank you for registration ${username}`);
 });
