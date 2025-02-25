@@ -1,12 +1,10 @@
 console.clear();
-require("dotenv").config(); // Allowing read from .env file
+require("dotenv").config();
 
 const jwt = require("jsonwebtoken");
 const express = require("express");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
-
-
 
 const db = require("better-sqlite3")("database.db");
 db.pragma("journal_mode = WAL");
@@ -41,13 +39,19 @@ app.use(express.urlencoded({ extended: false })); // Parse form data
 app.use(function (req, res, next) {
   res.locals.errors = []; // Setting empty errors for all templates
 
+  // Try to decode incoming cookie
   try {
     const decoded = jwt.verify(req.cookies.user, process.env.JWTSECRET);
-    console.log(decoded);
+    req.user = decoded.userId;
   } catch (err) {
     console.log("There is either no cookie, or malformed");
+    req.user = false;
   }
-  
+
+  // req.locals.user = req.user; // Access from templates!
+
+  console.log(req.user);
+
   next();
 });
 
@@ -81,7 +85,6 @@ app.post("/register", (req, res) => {
   if (username && !username.match(/^[a-zA-Z0-9]+$/)) {
     errors.push("Username can't contain special characters");
   }
-
   // TODO: Check if user already exists in db
   if (users[username]) {
     errors.push("User already exists");
@@ -102,36 +105,32 @@ app.post("/register", (req, res) => {
     return res.render("homepage", { errors });
   }
 
-
-// Add the user to our database
-
-  const salt = bcrypt.genSaltSync(10); //add salt for hash password
+  // Add the user to our database
+  const salt = bcrypt.genSaltSync(10);
   password = bcrypt.hashSync(password, salt);
 
-  
-const statement = db.prepare(
-  `INSERT INTO users (username, password) VALUES (?, ?)`
-);
-const result = statement.run(username, password);
+  const statement = db.prepare(
+    `INSERT INTO users (username, password) VALUES (?, ?)`
+  );
+  const result = statement.run(username, password);
 
   const lookUp = db.prepare(`SELECT * FROM USERS WHERE ROWID = ?`);
   const ourUser = lookUp.get(result.lastInsertRowid);
 
-  console.log("-----");
-  console.log(JSON.stringify(ourUser));
-  const ourTokenValue = jwt.sign(ourUser.id, process.env.JWTSECRET);
-
+  const ourTokenValue = jwt.sign(
+    { userId: ourUser.id, exp: Date.now() / 1000 + 60 * 60 * 24 * 7 },
+    process.env.JWTSECRET
+  );
 
   // Send back a cookie to the user
-  res.cookie("user",  ourTokenValue, {
+  res.cookie("user", ourTokenValue, {
     httpOnly: true, // Not for client side JS
     secure: true, // Only for https
     sameSite: "strict", // CSRF Attacks but allows for subdomain
-    maxAge: 1000 * 60 * 60 * 24, // milliseconds, our cookie is good for a day
+    maxAge: 1000 * 60 * 60 * 24 * 7, // milliseconds, our cookie is good for a week
   });
 
- 
-return res.send(`Thank you for registration ${username}`);
+  return res.send(`Thank you for registration ${username}`);
 });
 // User Registration Ends
 
@@ -163,8 +162,6 @@ app.post("/login", (req, res) => {
     errors.push("Invalid username / password");
   }
 
-  
-
   if (errors.length > 0) {
     return res.render("login", { errors });
   }
@@ -179,6 +176,5 @@ app.get("/logout", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  
   console.log(`Server fired up 🔥 on PORT: ${PORT}`);
 });
