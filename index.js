@@ -40,7 +40,14 @@ app.use(express.urlencoded({ extended: false })); // Parse form data
 
 app.use(function (req, res, next) {
   res.locals.errors = []; // Setting empty errors for all templates
-  console.log(req.cookies.user);
+
+  try {
+    const decoded = jwt.verify(req.cookies.user, process.env.JWTSECRET);
+    console.log(decoded);
+  } catch (err) {
+    console.log("There is either no cookie, or malformed");
+  }
+  
   next();
 });
 
