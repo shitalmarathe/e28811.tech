@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('includes/head') %>
+  <body>
+    <%- include('includes/header') %>
+
+    <main>
+      <% if(errors.length > 0) { %>
+      <p><mark style="background: tomato">Errors</mark></p>
+      <ul>
+        <% errors.forEach((error) => { %>
+        <li><%= error %></li>
+        <% }) %>
+      </ul>
+      <% } %>
+
+      <form action="/edit-paper/<%= paper.id %>" method="POST">
+        <fieldset>
+          <legend>Edit Exisiting Paper</legend>
+
+          <label for="title">Title</label>
+          <br />
+          <input
+            type="text"
+            id="title"
+            name="title"
+            autocomplete="off"
+            value="<%= paper.title %>"
+            required
+          />
+          <br />
+
+          <label for="body">Body</label>
+          <br />
+          <textarea name="body" id="body" autocomplete="off" required>
+<%= paper.body %></textarea
+          >
+
+          <br />
+
+          <button type="submit">Save Changes</button>
+        </fieldset>
+      </form>
+    </main>
+
+    <%- include('includes/footer') %>
+  </body>
+</html>

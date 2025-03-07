@@ -288,7 +288,76 @@ app.get("/paper/:id", (req, res) => {
     return res.redirect("/");
   }
 
-  return res.render("single-paper", { paper });
+  const isAuthor = paper.authorid === req.user;
+
+  return res.render("single-paper", { paper, isAuthor });
+});
+
+app.get("/edit-paper/:id", mustBeLoggedIn, (req, res) => {
+  // test if there is a paper with this id in the database
+  const statement = db.prepare(`SELECT * FROM papers WHERE id = ?`);
+  const paper = statement.get(req.params.id);
+
+  if (!paper) {
+    res.redirect("/");
+  }
+
+  // check if the user has access to edit this paper
+  if (paper.authorid !== req.user) {
+    return res.redirect("/");
+  }
+
+  // otherwise render the edit functionality
+  return res.render("edit-paper", { paper });
+});
+
+app.post("/edit-paper/:id", mustBeLoggedIn, (req, res) => {
+  // test if there is a paper with this id in the database
+  const statement = db.prepare(`SELECT * FROM papers WHERE id = ?`);
+  const paper = statement.get(req.params.id);
+
+  if (!paper) {
+    res.redirect("/");
+  }
+
+  // check if the user has access to edit this paper
+  if (paper.authorid !== req.user) {
+    return res.redirect("/");
+  }
+
+  const errors = postValidation(req);
+
+  if (errors.length) {
+    return res.redirect("edit-paper", { errors });
+  }
+
+  // Update into the database
+  const updateStatement = db.prepare(
+    `UPDATE papers SET title = ?, body = ? WHERE id = ?`
+  );
+  updateStatement.run(req.body.title, req.body.body, req.params.id);
+  return res.redirect(`/paper/${req.params.id}`);
+});
+
+app.post("/delete-paper/:id", mustBeLoggedIn, (req, res) => {
+  // test if there is a paper with this id in the database
+  const statement = db.prepare(`SELECT * FROM papers WHERE id = ?`);
+  const paper = statement.get(req.params.id);
+
+  if (!paper) {
+    res.redirect("/");
+  }
+
+  // check if the user has access to edit this paper
+  if (paper.authorid !== req.user) {
+    return res.redirect("/");
+  }
+
+  // Delete from database
+  const deleteStatement = db.prepare(`DELETE FROM papers WHERE id = ?`);
+  deleteStatement.run(req.params.id);
+
+  return res.redirect("/");
 });
 
 
