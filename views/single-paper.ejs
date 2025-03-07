@@ -11,9 +11,10 @@
 
       <article>
         <small
-          >Posted by <%= paper.username %> on <%= new Date().getDate()
-          %>&#8725;<%= new Date().toLocaleString('default', { month: 'long' });
-          %>&#8725;<%= new Date().getFullYear() %>
+        >Posted by <%= paper.username %> on <%= new
+        Date(paper.createdDate).getDate() %>&#8725;<%= new
+        Date(paper.createdDate).toLocaleString('default', { month: 'long' });
+        %>&#8725;<%= new Date(paper.createdDate).getFullYear() %>
         </small>
         <hr />
 
