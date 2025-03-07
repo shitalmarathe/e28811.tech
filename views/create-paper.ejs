@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('includes/head') %>
+  <body>
+    <%- include('includes/header') %>
+
+    <main>
+      <% if(errors.length > 0) { %>
+      <p><mark style="background: tomato">Errors</mark></p>
+      <ul>
+        <% errors.forEach((error) => { %>
+        <li><%= error %></li>
+        <% }) %>
+      </ul>
+      <% } %>
+
+      <form action="/create-paper" method="POST">
+        <fieldset>
+          <legend>Create Research Paper</legend>
+
+          <label for="title">Title</label>
+          <br />
+          <input
+            type="text"
+            id="title"
+            name="title"
+            autocomplete="off"
+            required
+          />
+          <br />
+
+            <label for="body">Body</label>
+            <br />
+            <textarea name="body" id="body" autocomplete="off" 
+            required></textarea>
+
+
+          <br />
+
+          <button type="submit">Publish</button>
+        </fieldset>
+      </form>
+    </main>
+
+    <%- include('includes/footer') %>
+  </body>
+</html>

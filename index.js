@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const express = require("express");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
+const sanitizeHtml = require("sanitize-html");
 
 const db = require("better-sqlite3")("database.db");
 db.pragma("journal_mode = WAL");
@@ -23,6 +24,19 @@ const createTables = db.transaction(() => {
       username STRING NOT NULL UNIQUE,
       password STRING NOT NULL
     )
+    `
+  ).run();
+
+  db.prepare(
+    `
+      CREATE TABLE IF NOT EXISTS papers(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        createdDate TEXT,
+        title STRING NOT NULL,
+        body STRING NOT NULL,
+        authorid INTEGER,
+        FOREIGN KEY (authorid) REFERENCES users (id)
+      )
     `
   ).run();
 });
@@ -75,6 +89,7 @@ app.post("/register", (req, res) => {
   if (typeof username !== "string") username = "";
   if (typeof password !== "string") password = "";
 
+
   // Username Validation
   if (!username) {
     errors.push("Username is required");
@@ -88,10 +103,19 @@ app.post("/register", (req, res) => {
   if (username && !username.match(/^[a-zA-Z0-9]+$/)) {
     errors.push("Username can't contain special characters");
   }
-  // TODO: Check if user already exists in db
-  if (users[username]) {
+
+
+  //  Check if user already exists in db
+  const usernameExistsStatement = db.prepare(
+    "SELECT * FROM users WHERE USERNAME = ?"
+  );
+  const usernameCheck = usernameExistsStatement.get(username);
+
+  if (usernameCheck) {
     errors.push("User already exists");
   }
+
+
 
   // Password Validation
   if (!password) {
@@ -144,6 +168,7 @@ app.get("/login", (req, res) => {
   res.render("login");
 });
 
+// Implement Login
 app.post("/login", (req, res) => {
   let { username, password } = req.body;
   const errors = [];
@@ -155,30 +180,116 @@ app.post("/login", (req, res) => {
 
   // Check for empty values
   if (!username || !password) {
-    errors.push("Please provide proper username & password");
-  }
-
-  // TODO: If not exists
-  if (!users[username]) {
-    errors.push("User does not exist");
-  }
-
-  // Check for password
-  if (users[username] !== password) {
     errors.push("Invalid username / password");
+  }
+
+  if (errors.length) {
+    return res.render("login", { errors });
+  }
+
+    // If username is not there in the database
+    const userInDBStatement = db.prepare(
+      `SELECT * FROM users WHERE USERNAME = ?`
+    );
+    const userInDB = userInDBStatement.get(username);
+  
+    if (!userInDB) {
+    errors.push("User does not exist");
+    return res.render("login", { errors });
+  }
+
+   // Check for password matching
+   const passwordCheck = bcrypt.compareSync(password, userInDB.password);
+   if (!passwordCheck) {
+     errors.push("Password is incorrect");
   }
 
   if (errors.length > 0) {
     return res.render("login", { errors });
   }
 
-  return res.send(`Thanks, you're now logged in! ${username}`);
+ // Send back a cookie to the user
+ const ourTokenValue = jwt.sign(
+  { userId: userInDB.id, exp: Date.now() / 1000 + 60 * 60 * 24 * 7 },
+  process.env.JWTSECRET
+);
+
+res.cookie("user", ourTokenValue, {
+  httpOnly: true, // Not for client side JS
+  secure: true, // Only for https
+  sameSite: "strict", // CSRF Attacks but allows for subdomain
+  maxAge: 1000 * 60 * 60 * 24 * 7, // milliseconds, our cookie is good for a week
 });
+
+// Redirect them to the home page
+res.redirect("/");
+});
+
 
 // Logout
 app.get("/logout", (req, res) => {
   res.clearCookie("user");
   res.redirect("/");
+});
+
+// Implement Post Functionality
+function mustBeLoggedIn(req, res, next) {
+  if (req.user) {
+    return next();
+  }
+
+  return res.redirect("/");
+}
+
+// Common post request validation field
+function postValidation(req) {
+  const errors = [];
+
+  if (typeof req.body.title !== "string") req.body.title = "";
+  if (typeof req.body.body !== "string") req.body.body = "";
+
+  // TODO: Do not allow or remove any html tags
+  req.body.title = sanitizeHtml(req.body.title, {
+    allowedTags: [],
+    allowedAttributes: {},
+  });
+  req.body.body = sanitizeHtml(req.body.body, {
+    allowedTags: ["a"],
+    allowedAttributes: {
+      a: ["href"],
+    },
+  });
+
+  if (!req.body.title) errors.push("Title must not be empty");
+  if (!req.body.body) errors.push("Body must not be empty");
+
+  return errors;
+}
+
+app.get("/create-paper", mustBeLoggedIn, (req, res) => {
+  res.render("create-paper");
+});
+
+app.post("/create-paper", mustBeLoggedIn, (req, res) => {
+  const errors = postValidation(req);
+
+  if (errors.length) {
+    console.log("inside errors");
+    return res.render("create-paper", { errors });
+  }
+
+  // Save into database
+  const statement = db.prepare(
+    `INSERT INTO papers (title, body, authorid, createdDate) VALUES (?, ?, ?, ?)`
+  );
+  statement.run(
+    req.body.title,
+    req.body.body,
+    req.user,
+    new Date().toISOString()
+  );
+
+  return res.send("hey there");
 });
 
 app.listen(PORT, () => {
