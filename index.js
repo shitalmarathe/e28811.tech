@@ -248,6 +248,8 @@ function postValidation(req) {
   if (typeof req.body.title !== "string") req.body.title = "";
   if (typeof req.body.body !== "string") req.body.body = "";
 
+
+
   // TODO: Do not allow or remove any html tags
   req.body.title = sanitizeHtml(req.body.title, {
     allowedTags: [],
@@ -270,6 +272,24 @@ app.get("/create-paper", mustBeLoggedIn, (req, res) => {
   res.render("create-paper");
 });
 
+
+// Read a paper route
+app.get("/paper/:id", (req, res) => {
+  // Read operation on db
+  const statement = db.prepare(
+    `SELECT papers.*, users.username FROM papers INNER JOIN users ON papers.authorid = users.id WHERE papers.id = ?`
+  );
+  const paper = statement.get(req.params.id);
+
+  if (!paper) {
+    return res.redirect("/");
+  }
+
+  return res.render("single-paper", { paper });
+});
+
+
+
 app.post("/create-paper", mustBeLoggedIn, (req, res) => {
   const errors = postValidation(req);
 
@@ -278,18 +298,24 @@ app.post("/create-paper", mustBeLoggedIn, (req, res) => {
     return res.render("create-paper", { errors });
   }
 
+
+
   // Save into database
   const statement = db.prepare(
     `INSERT INTO papers (title, body, authorid, createdDate) VALUES (?, ?, ?, ?)`
   );
-  statement.run(
+  const result = statement.run(
     req.body.title,
     req.body.body,
     req.user,
     new Date().toISOString()
   );
 
-  return res.send("hey there");
+ // Redirect user to newly created paper
+ const getPostStatement = db.prepare(`SELECT * FROM papers WHERE ROWID = ?`);
+ const realPost = getPostStatement.get(result.lastInsertRowid);
+
+ return res.redirect(`/paper/${realPost.id}`);
 });
 
 app.listen(PORT, () => {

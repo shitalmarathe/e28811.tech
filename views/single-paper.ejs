@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('includes/head') %>
+  <body>
+    <%- include('includes/header') %>
+
+    <main>
+      <header>
+        <h1><%= paper.title %></h1>
+      </header>
+
+      <article>
+        <small
+          >Posted by <%= paper.username %> on <%= new Date().getDate()
+          %>&#8725;<%= new Date().toLocaleString('default', { month: 'long' });
+          %>&#8725;<%= new Date().getFullYear() %>
+        </small>
+        <hr />
+
+        <div><%= paper.body %></div>
+      </article>
+    </main>
+
+    <%- include('includes/footer') %>
+  </body>
+</html>
