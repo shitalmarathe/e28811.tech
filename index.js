@@ -6,6 +6,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const sanitizeHtml = require("sanitize-html");
+const marked = require("marked");
 
 const db = require("better-sqlite3")("database.db");
 db.pragma("journal_mode = WAL");
@@ -51,6 +52,11 @@ app.use(express.static("public")); // Using public as our static
 app.use(express.urlencoded({ extended: false })); // Parse form data
 
 app.use((req, res, next) => {
+  // Marked function for our template
+  res.locals.formatHTML = function (content) {
+    return marked.parse(content);
+  };
+  
   res.locals.errors = []; // Setting empty errors for all templates
 
   // Try to decode incoming cookie

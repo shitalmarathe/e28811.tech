@@ -365,3 +365,9 @@ input {
 img {
   max-width: 100%;
 }
+
+
+.editor {
+  height: 200px;
+  width: 100%;
+}
