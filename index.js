@@ -56,7 +56,7 @@ app.use((req, res, next) => {
   res.locals.formatHTML = function (content) {
     return marked.parse(content);
   };
-  
+
   res.locals.errors = []; // Setting empty errors for all templates
 
   // Try to decode incoming cookie
@@ -78,7 +78,7 @@ app.use((req, res, next) => {
 // MARK: Routes
 app.get("/", (req, res) => {
   if (req.user) {
-    const statement = db.prepare(`SELECT * FROM papers WHERE authorid = ?`);
+    const statement = db.prepare(`SELECT * FROM papers WHERE authorid = ? ORDER BY createdDate DESC`);
     const papers = statement.all(req.user.userId);
 
     return res.render("dashboard", { papers });
