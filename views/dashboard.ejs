@@ -5,7 +5,7 @@
     <%- include('includes/header') %>
 
     <main>
-      <h1>Welcome to your dashboard.</h1>
+      <h1>Welcome <mark><%= user.username %></mark>,to your dashboard.</h1>
       <% if(papers.length === 0){ %>
         <p>You do not have any published research papers.</p>
         <% } else { %>

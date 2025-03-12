@@ -50,15 +50,15 @@ app.use(cookieParser());
 app.use(express.static("public")); // Using public as our static
 app.use(express.urlencoded({ extended: false })); // Parse form data
 
-app.use( (req, res, next) =>{
+app.use((req, res, next) => {
   res.locals.errors = []; // Setting empty errors for all templates
 
   // Try to decode incoming cookie
   try {
     const decoded = jwt.verify(req.cookies.user, process.env.JWTSECRET);
-    req.user = decoded.userId;
+    const { userId, username } = decoded;
+    req.user = { userId, username };
   } catch (err) {
-    console.log("There is either no cookie, or malformed");
     req.user = false;
   }
 
@@ -69,16 +69,15 @@ app.use( (req, res, next) =>{
   next();
 });
 
-const users = {};
-
 // MARK: Routes
 app.get("/", (req, res) => {
   if (req.user) {
     const statement = db.prepare(`SELECT * FROM papers WHERE authorid = ?`);
-    const papers = statement.all(req.user);
+    const papers = statement.all(req.user.userId);
 
     return res.render("dashboard", { papers });
   }
+
   res.render("homepage");
 });
 
@@ -91,7 +90,6 @@ app.post("/register", (req, res) => {
 
   if (typeof username !== "string") username = "";
   if (typeof password !== "string") password = "";
-
 
   // Username Validation
   if (!username) {
@@ -107,8 +105,7 @@ app.post("/register", (req, res) => {
     errors.push("Username can't contain special characters");
   }
 
-
-  //  Check if user already exists in db
+  // Check for username in DB
   const usernameExistsStatement = db.prepare(
     "SELECT * FROM users WHERE USERNAME = ?"
   );
@@ -117,8 +114,6 @@ app.post("/register", (req, res) => {
   if (usernameCheck) {
     errors.push("User already exists");
   }
-
-
 
   // Password Validation
   if (!password) {
@@ -144,13 +139,16 @@ app.post("/register", (req, res) => {
   );
   const result = statement.run(username, password);
 
-
   // Get newly created user db rowid
   const lookUp = db.prepare(`SELECT * FROM USERS WHERE ROWID = ?`);
   const ourUser = lookUp.get(result.lastInsertRowid);
 
   const ourTokenValue = jwt.sign(
-    { userId: ourUser.id, exp: Date.now() / 1000 + 60 * 60 * 24 * 7 },
+    {
+      userId: ourUser.id,
+      username: username,
+      exp: Date.now() / 1000 + 60 * 60 * 24 * 7,
+    },
     process.env.JWTSECRET
   );
 
@@ -161,10 +159,9 @@ app.post("/register", (req, res) => {
     sameSite: "strict", // CSRF Attacks but allows for subdomain
     maxAge: 1000 * 60 * 60 * 24 * 7, // milliseconds, our cookie is good for a week
   });
+
   res.redirect("/");
 });
-
-
 // User Registration Ends
 
 app.get("/login", (req, res) => {
@@ -190,44 +187,47 @@ app.post("/login", (req, res) => {
     return res.render("login", { errors });
   }
 
-    // If username is not there in the database
-    const userInDBStatement = db.prepare(
-      `SELECT * FROM users WHERE USERNAME = ?`
-    );
-    const userInDB = userInDBStatement.get(username);
-  
-    if (!userInDB) {
+  // If username is not there in the database
+  const userInDBStatement = db.prepare(
+    `SELECT * FROM users WHERE USERNAME = ?`
+  );
+  const userInDB = userInDBStatement.get(username);
+
+  if (!userInDB) {
     errors.push("User does not exist");
     return res.render("login", { errors });
   }
 
-   // Check for password matching
-   const passwordCheck = bcrypt.compareSync(password, userInDB.password);
-   if (!passwordCheck) {
-     errors.push("Password is incorrect");
+  // Check for password matching
+  const passwordCheck = bcrypt.compareSync(password, userInDB.password);
+  if (!passwordCheck) {
+    errors.push("Password is incorrect");
   }
 
   if (errors.length > 0) {
     return res.render("login", { errors });
   }
 
- // Send back a cookie to the user
- const ourTokenValue = jwt.sign(
-  { userId: userInDB.id, exp: Date.now() / 1000 + 60 * 60 * 24 * 7 },
-  process.env.JWTSECRET
-);
+  // Send back a cookie to the user
+  const ourTokenValue = jwt.sign(
+    {
+      userId: userInDB.id,
+      username: username,
+      exp: Date.now() / 1000 + 60 * 60 * 24 * 7,
+    },
+    process.env.JWTSECRET
+  );
 
-res.cookie("user", ourTokenValue, {
-  httpOnly: true, // Not for client side JS
-  secure: true, // Only for https
-  sameSite: "strict", // CSRF Attacks but allows for subdomain
-  maxAge: 1000 * 60 * 60 * 24 * 7, // milliseconds, our cookie is good for a week
+  res.cookie("user", ourTokenValue, {
+    httpOnly: true, // Not for client side JS
+    secure: true, // Only for https
+    sameSite: "strict", // CSRF Attacks but allows for subdomain
+    maxAge: 1000 * 60 * 60 * 24 * 7, // milliseconds, our cookie is good for a week
+  });
+
+  // Redirect them to the home page
+  res.redirect("/");
 });
-
-// Redirect them to the home page
-res.redirect("/");
-});
-
 
 // Logout
 app.get("/logout", (req, res) => {
@@ -251,8 +251,6 @@ function postValidation(req) {
   if (typeof req.body.title !== "string") req.body.title = "";
   if (typeof req.body.body !== "string") req.body.body = "";
 
-
-
   // TODO: Do not allow or remove any html tags
   req.body.title = sanitizeHtml(req.body.title, {
     allowedTags: [],
@@ -275,7 +273,6 @@ app.get("/create-paper", mustBeLoggedIn, (req, res) => {
   res.render("create-paper");
 });
 
-
 // Read a paper route
 app.get("/paper/:id", (req, res) => {
   // Read operation on db
@@ -288,7 +285,7 @@ app.get("/paper/:id", (req, res) => {
     return res.redirect("/");
   }
 
-  const isAuthor = paper.authorid === req.user;
+  const isAuthor = paper.authorid === req.user.userId;
 
   return res.render("single-paper", { paper, isAuthor });
 });
@@ -303,7 +300,7 @@ app.get("/edit-paper/:id", mustBeLoggedIn, (req, res) => {
   }
 
   // check if the user has access to edit this paper
-  if (paper.authorid !== req.user) {
+  if (paper.authorid !== req.user.userId) {
     return res.redirect("/");
   }
 
@@ -321,7 +318,7 @@ app.post("/edit-paper/:id", mustBeLoggedIn, (req, res) => {
   }
 
   // check if the user has access to edit this paper
-  if (paper.authorid !== req.user) {
+  if (paper.authorid !== req.user.userId) {
     return res.redirect("/");
   }
 
@@ -349,7 +346,7 @@ app.post("/delete-paper/:id", mustBeLoggedIn, (req, res) => {
   }
 
   // check if the user has access to edit this paper
-  if (paper.authorid !== req.user) {
+  if (paper.authorid !== req.user.userId) {
     return res.redirect("/");
   }
 
@@ -360,8 +357,6 @@ app.post("/delete-paper/:id", mustBeLoggedIn, (req, res) => {
   return res.redirect("/");
 });
 
-
-
 app.post("/create-paper", mustBeLoggedIn, (req, res) => {
   const errors = postValidation(req);
 
@@ -370,8 +365,6 @@ app.post("/create-paper", mustBeLoggedIn, (req, res) => {
     return res.render("create-paper", { errors });
   }
 
-
-
   // Save into database
   const statement = db.prepare(
     `INSERT INTO papers (title, body, authorid, createdDate) VALUES (?, ?, ?, ?)`
@@ -379,15 +372,15 @@ app.post("/create-paper", mustBeLoggedIn, (req, res) => {
   const result = statement.run(
     req.body.title,
     req.body.body,
-    req.user,
+    req.user.userId,
     new Date().toISOString()
   );
 
- // Redirect user to newly created paper
- const getPostStatement = db.prepare(`SELECT * FROM papers WHERE ROWID = ?`);
- const realPost = getPostStatement.get(result.lastInsertRowid);
+  // Redirect user to newly created paper
+  const getPostStatement = db.prepare(`SELECT * FROM papers WHERE ROWID = ?`);
+  const realPost = getPostStatement.get(result.lastInsertRowid);
 
- return res.redirect(`/paper/${realPost.id}`);
+  return res.redirect(`/paper/${realPost.id}`);
 });
 
 app.listen(PORT, () => {
