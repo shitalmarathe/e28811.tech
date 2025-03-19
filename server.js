@@ -41,7 +41,7 @@ res.locals.title = "Publish Research Papers";
 
   res.locals.recentPapers = function () {
     const recentStatement = db.prepare(
-      `SELECT * FROM papers ORDER BY createdDate DESC`
+      `SELECT * FROM papers ORDER BY createdDate DESC LIMIT 4`
     );
 
     // Give recently published 4
