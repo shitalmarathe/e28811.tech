@@ -43,6 +43,8 @@ res.locals.title = "Publish Research Papers";
     const recentStatement = db.prepare(
       `SELECT * FROM papers ORDER BY createdDate DESC`
     );
+
+    // Give recently published 4
     const papers = recentStatement.all().slice(0, 4);
     return papers;
   };
@@ -52,7 +54,10 @@ res.locals.title = "Publish Research Papers";
     );
   };
 
-
+  res.locals.formatDate = function (dateTimeStamp) {
+    const date = new Intl.DateTimeFormat("en-IN", dateTimeStamp);
+    return date.format();
+  };
 
   console.log(req.user);
 

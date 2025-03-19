@@ -3,7 +3,7 @@
       <div class="container">
         <div class="top-header-inner">
           <div class="top-left">
-                 <!-- TODO: Show recent papers -->
+                
             <div class="ticker-wrap">
               <div class="ticker-title">
                 <svg
@@ -20,7 +20,7 @@
               <div class="ticker-slide-wrap">
                 <div class="swiper ticker-slider">
                   <div class="swiper-wrapper">
-                    <!-- TODO: Implement recent 3 papers functionality -->
+                    <!-- Show recently published papers -->
                     <% for(let paper of recentPapers()){ %>
                       <div class="swiper-slide">
                         <a href="/paper/<%= paper.id %>">
