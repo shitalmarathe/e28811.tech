@@ -21,16 +21,11 @@
                 <div class="swiper ticker-slider">
                   <div class="swiper-wrapper">
                     <!-- TODO: Implement recent 3 papers functionality -->
-                    <div class="swiper-slide">
-                      <a href="single.html"
-                        >Former CIA hacker sentenced to 40 years in prison...</a
-                      >
-                    </div>
-                    <div class="swiper-slide">
-                      <a href="single.html"
-                        >US approves $4bn sale of armed drones to India...</a
-                      >
-                    </div>
+                    <% for(let paper of recentPapers()){ %>
+                      <div class="swiper-slide">
+                        <a href="/paper/<%= paper.id %>"><%= paper.title %></a>
+                      </div>
+                      <% } %>
                     <div class="swiper-slide">
                       <a href="single.html"
                         >Facebook at 20: Four ways it changed the world...</a
