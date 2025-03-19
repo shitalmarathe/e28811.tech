@@ -99,9 +99,10 @@
                   </div>
                   <div class="single-post-item">
                     <ul class="single-post-navigation">
-                      <li
-                        ><a <% if(paper.id>
-                          1){ %> href="/paper/<%= paper.id - 1 %>" <% } %> ><svg
+                      <li>
+                        <% if(paper.id > 1) { %>
+                        <a href="/paper/<%= paper.id - 1 %>"
+                          ><svg
                             xmlns="http://www.w3.org/2000/svg"
                             height="24"
                             viewBox="0 -960 960 960"
@@ -110,10 +111,25 @@
                           >
                             <path
                               d="M366.924-213.463 100.001-480.385l266.923-266.922 41.768 41.768-194.54 195.155h646.231v59.999H214.537l195.155 195.154-42.768 41.768Z"
-                            /></svg
-                          >Prev Posts</a
-                        ></li
-                      >
+                            /></svg>
+                          Prev Posts</a
+                          >
+                          <% } else { %>
+                          <a
+                            ><svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              height="24"
+                              viewBox="0 -960 960 960"
+                              width="24"
+                              fill="currentColor"
+                            >
+                              <path
+                                d="M366.924-213.463 100.001-480.385l266.923-266.922 41.768 41.768-194.54 195.155h646.231v59.999H214.537l195.155 195.154-42.768 41.768Z"
+                              /></svg>
+                            Prev Posts</a>
+                          
+                          <% } %>
+                        </li>
                       <li
                         ><a href="/paper/<%= paper.id + 1 %>"
                           >Next Posts<svg
