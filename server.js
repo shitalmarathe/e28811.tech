@@ -237,15 +237,35 @@ function postValidation(req) {
   if (typeof req.body.title !== "string") req.body.title = "";
   if (typeof req.body.body !== "string") req.body.body = "";
 
-  // TODO: Do not allow or remove any html tags
+   // Strip or sanitize incoming HTML paper title, body
   req.body.title = sanitizeHtml(req.body.title, {
     allowedTags: [],
     allowedAttributes: {},
   });
+
   req.body.body = sanitizeHtml(req.body.body, {
-    allowedTags: ["a"],
+    allowedTags: [
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+      "p",
+      "strong",
+      "em",
+      "b",
+      "i",
+      "ul",
+      "ol",
+      "li",
+      "hr",
+      "img",
+      "a",
+    ],
     allowedAttributes: {
       a: ["href"],
+      img: ["src", "alt"],
     },
   });
 
