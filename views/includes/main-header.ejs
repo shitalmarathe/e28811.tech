@@ -23,7 +23,9 @@
                     <!-- TODO: Implement recent 3 papers functionality -->
                     <% for(let paper of recentPapers()){ %>
                       <div class="swiper-slide">
-                        <a href="/paper/<%= paper.id %>"><%= paper.title %></a>
+                        <a href="/paper/<%= paper.id %>">
+                          <%=  truncateTitle(paper.title) %>
+                        </a>
                       </div>
                       <% } %>
                     <div class="swiper-slide">

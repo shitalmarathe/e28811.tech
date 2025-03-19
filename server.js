@@ -20,7 +20,21 @@ app.use(express.static("public")); // Using public as our static
 app.use(express.urlencoded({ extended: false })); // Parse form data
 
 app.use((req, res, next) => {
-  // Marked function for our template
+// Try to decode incoming cookie
+try {
+  const decoded = jwt.verify(req.cookies.user, process.env.JWTSECRET);
+  const { userId, username } = decoded;
+  req.user = { userId, username };
+} catch (err) {
+  req.user = false;
+}
+
+// Variables for ejs templates
+res.locals.user = req.user; // Access from templates!
+res.locals.errors = []; // Setting empty errors for all templates
+res.locals.title = "Publish Research Papers";
+
+// Functions for ejs templates
   res.locals.formatHTML = function (content) {
     return marked.parse(content);
   };
@@ -32,21 +46,13 @@ app.use((req, res, next) => {
     const papers = recentStatement.all().slice(0, 4);
     return papers;
   };
+  res.locals.truncateTitle = function truncateTitle(title, maxLength = 30) {
+    return (
+      title.substring(0, maxLength) + (title.length > maxLength ? "..." : "")
+    );
+  };
 
 
-  res.locals.errors = []; // Setting empty errors for all templates
-  res.locals.title = "Publish Research Papers";
-
-  // Try to decode incoming cookie
-  try {
-    const decoded = jwt.verify(req.cookies.user, process.env.JWTSECRET);
-    const { userId, username } = decoded;
-    req.user = { userId, username };
-  } catch (err) {
-    req.user = false;
-  }
-
-  res.locals.user = req.user; // Access from templates!
 
   console.log(req.user);
 
