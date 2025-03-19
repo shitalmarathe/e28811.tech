@@ -28,6 +28,7 @@ app.use((req, res, next) => {
   };
 
   res.locals.errors = []; // Setting empty errors for all templates
+  res.locals.title = "Publish Research Papers";
 
   // Try to decode incoming cookie
   try {
