@@ -1,47 +1,17 @@
 console.clear();
-require("dotenv").config();
+import dotenv from "dotenv";
+ dotenv.config();
 
-const jwt = require("jsonwebtoken");
-const express = require("express");
-const bcrypt = require("bcrypt");
-const cookieParser = require("cookie-parser");
-const sanitizeHtml = require("sanitize-html");
-const marked = require("marked");
-
-const db = require("better-sqlite3")("database.db");
-db.pragma("journal_mode = WAL");
+ import jwt from "jsonwebtoken";
+ import express from "express";
+ import bcrypt from "bcrypt";
+ import cookieParser from "cookie-parser";
+ import sanitizeHtml from "sanitize-html";
+ import { marked } from "marked";
+ import { db } from "./lib/db.js";
 
 const PORT = process.env.PORT || 3000; // Getting port number from .env
 
-// Database Setup
-const createTables = db.transaction(() => {
-  // Create users table
-  // 1. write a sql statement db.prepare
-  // 2. to run it .run()
-  db.prepare(
-    `
-    CREATE TABLE IF NOT EXISTS users(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username STRING NOT NULL UNIQUE,
-      password STRING NOT NULL
-    )
-    `
-  ).run();
-
-  db.prepare(
-    `
-      CREATE TABLE IF NOT EXISTS papers(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        createdDate TEXT,
-        title STRING NOT NULL,
-        body STRING NOT NULL,
-        authorid INTEGER,
-        FOREIGN KEY (authorid) REFERENCES users (id)
-      )
-    `
-  ).run();
-});
-createTables();
 
 const app = express();
 app.set("view engine", "ejs"); // Setting ejs as our template engine
