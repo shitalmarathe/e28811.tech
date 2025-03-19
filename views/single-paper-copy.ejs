@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('includes/head') %>
+  <body>
+    <%- include('includes/header') %>
+
+    <main>
+      <header>
+        <h1><%= paper.title %></h1>
+      </header>
+
+      <article>
+        <small
+          >Posted by <%= paper.username %> on <%= new
+          Date(paper.createdDate).getDate() %>&#8725;<%= new
+          Date(paper.createdDate).toLocaleString('default', { month: 'long' });
+          %>&#8725;<%= new Date(paper.createdDate).getFullYear() %>
+        </small>
+        <hr />
+
+        <div><%- formatHTML(paper.body) %></div>
+      </article>
+
+      <% if(isAuthor){ %>
+
+      <a href="/edit-paper/<%= paper.id %>">
+        <button type="button">Edit</button>
+      </a>
+
+      <form
+        action="/delete-paper/<%= paper.id %>"
+        method="POST"
+        style="display: inline"
+      >
+        <button type="submit">Delete</button>
+      </form>
+      <% } %>
+    </main>
+
+    <%- include('includes/footer') %>
+  </body>
+</html>

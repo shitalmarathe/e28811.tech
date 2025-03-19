@@ -3,6 +3,7 @@
       <div class="container">
         <div class="top-header-inner">
           <div class="top-left">
+                 <!-- TODO: Show recent papers -->
             <div class="ticker-wrap">
               <div class="ticker-title">
                 <svg
@@ -14,7 +15,7 @@
                   <path
                     d="M420.001-143.082v-276.919H307.694v-439.998H653.46l-73.461 255.768h158.076L420.001-143.082Z"
                   /></svg>
-                  <span>Trending:</span>
+                  <span>Recent:</span>
               </div>
               <div class="ticker-slide-wrap">
                 <div class="swiper ticker-slider">
@@ -66,58 +67,17 @@
           <div class="main-header-info">
             <div class="header-menu-wrap">
               <ul class="nav-menu">
+                 <!-- Show publish if user logged in -->
+               <% if(user) { %>
                 <li>
-                  <a href="/" data-text="Home">Home</a>
-                  <ul>
-                    <li><a href="index.html">Home Default</a></li>
-                    <li><a href="index-2.html">Home Modern</a></li>
-                  </ul>
+                  <a href="/create-paper" data-text="Publish">Publish</a>
                 </li>
-                <li>
-                  <a href="archive.html" data-text="Pages">Pages</a>
-                  <ul>
-                    <li>
-                      <a href="archive.html">Archive</a>
-                      <ul>
-                        <li><a href="category.html">Category</a></li>
-                        <li><a href="author.html">Author</a></li>
-                        <li><a href="tag.html">Tags</a></li>
-                      </ul>
-                    </li>
-                    <li><a href="subscribe.html">Subscribe</a></li>
-                    <li><a href="search.html">Search</a></li>
-                    <li><a href="404.html">404 Error</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-                  </ul>
-                </li>
-                <li>
-                  <a href="blog-standard.html" data-text="Post Layout"
-                    >Post Layout</a
-                  >
-                  <ul>
-                    <li><a href="blog-standard.html">Standard</a></li>
-                    <li><a href="blog-grid.html">Grid Layout</a></li>
-                    <li><a href="blog-list.html">List Layout</a></li>
-                  </ul>
-                </li>
-                <li>
-                  <a href="single.html" data-text="Post Formats">Post Formats</a>
-                  <ul>
-                    <li><a href="single.html">Standard</a></li>
-                    <li><a href="single-gallery.html">Gallary</a></li>
-                    <li>
-                      <a href="single-left-sidebar.html">Left Sidebar</a>
-                    </li>
-                    <li>
-                      <a href="single-right-sidebar.html">Right Sidebar</a>
-                    </li>
-                    <li><a href="single-video.html">Video</a></li>
-                  </ul>
-                </li>
+                <% } %>
               </ul>
             </div>
             <!--/.header-menu-wrap-->
             <div class="menu-right-item">
+          <!-- TODO: Add search functionality -->
               <button class="menu-search">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -144,12 +104,7 @@
                   </g>
                 </svg>
               </button>
-              <button class="mobile-menu-action">
-                <span></span>
-                <span></span>
-                <span></span>
-              </button>
-             
+              
               <% if(user) { %>
               <a href="/logout" class="default-btn text-anim" data-text="Logout">
                 Logout
