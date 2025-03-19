@@ -1,8 +1,6 @@
 console.clear();
-import dotenv from "dotenv";
- dotenv.config();
 
- import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
  import express from "express";
  import bcrypt from "bcrypt";
  import cookieParser from "cookie-parser";
