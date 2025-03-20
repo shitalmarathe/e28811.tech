@@ -39,6 +39,13 @@ res.locals.title = "Publish Research Papers";
     return marked.parse(content);
   };
 
+  res.locals.truncateHTML = function (content) {
+    return sanitizeHtml(content, {
+      allowedTags: [],
+      allowedAttributes: {},
+    });
+  };
+
   res.locals.recentPapers = function () {
     const recentStatement = db.prepare(
       `SELECT * FROM papers ORDER BY createdDate DESC LIMIT 4`
