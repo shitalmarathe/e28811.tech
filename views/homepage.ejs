@@ -1,51 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
-  <%- include('includes/head') %>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+ <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+ <!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+ <!--[if gt IE 8]><!-->
+ <html class="no-js" lang="en">
+   <!--<![endif]-->
+   <%- include('includes/main-head') %>
+
   <body>
-    <%- include('includes/header') %>
+    <!-- /.site-preloader -->
+    <%- include('includes/site-preloader') %> <%-
+    include('includes/main-header') %>
 
-    <main>
-      <h1>Welcome to e28811</h1>
-      <p>Create a new account to release research papers.</p>
+    <!--/.main-header-->
 
-      <% if(errors.length > 0) { %>
-      <p><mark style="background: tomato">Errors</mark></p>
-      <ul>
-        <% errors.forEach((error) => { %>
-        <li><%= error %></li>
-        <% }) %>
-      </ul>
-      <% } %>
+    <%- include('includes/popup-search-box') %>
+    <!--/.popup-search-box-->
 
-      <form action="/register" method="POST">
-        <fieldset>
-          <legend>Sign Up</legend>
+    <div id="searchbox-overlay"></div>
+    <!--/.searchbox-overlay-->
 
-          <label for="username">Username</label>
-          <input
-            name="username"
-            type="text"
-            id="username"
-            autocomplete="off"
-            required
-          />
-          <br />
+    <!-- 
+        MARK: Content
+    -->
+    <section class="contact-section padding">
+      <div class="map-pattern"></div>
+      <div class="container">
+        <div class="row gy-4 align-items-center">
+          <div class="col-lg-6">
+            <div class="section-heading mb-30">
+              <h2>Create an account</h2>
+              <p
+                >Start publishing your research papers digitally for free
+                today.</p
+              >
+              <h3>Features</h3>
+              <ul class="single-post-list">
+                <li>Comes under FOSS (Free and Open Source Software).</li>
+                <li>Secure with SSL encryption.</li>
+                <li>Easy and intuitive UI.</li>
+              </ul>
+            </div>
+            <ul class="contact-info">
+              <li
+                ><span>Help:</span
+                ><a href="mailto:contact@e28886.tech"
+                  >contact@e28886.tech</a
+                ></li
+              >
+            </ul>
+          </div>
+          <div class="col-lg-6">
+            <div class="contact-form mb-30">
+              <form
+                action="/register"
+                method="post"
+                id="ajax_contact"
+                class="form-horizontal"
+              >
+                <div class="contact-form-group">
+                  <div class="form-field">
+                    <input
+                      type="text"
+                      id="username"
+                      name="username"
+                      class="form-control"
+                      placeholder="Username"
+                      required="true"
+                    />
+                  </div>
+                  <div class="form-field">
+                    <input
+                      type="password"
+                      id="password"
+                      name="password"
+                      class="form-control"
+                      placeholder="Password"
+                      required="true"
+                    />
+                  </div>
+                  <div class="form-field submit-btn">
+                    <button
+                      id="submit"
+                      class="default-btn text-anim"
+                      type="submit"
+                      data-text="Sign Up"
+                      autocomplete="off"
+                      >Sign Up</button
+                    >
+                  </div>
+                </div>
+                <div id="form-messages" class="alert" role="alert"></div>
+              </form>
+            </div>
 
-          <label for="password">Password</label>
-          <input
-            name="password"
-            type="password"
-            id="password"
-            autocomplete="off"
-            required
-          />
-          <br />
-
-          <button type="submit">Sign Up</button>
-        </fieldset>
-      </form>
-    </main>
+            <% if(errors.length > 0) { %>
+            <p><mark style="background: tomato">Please fix these:</mark></p>
+            <ul class="single-post-list">
+              <% errors.forEach((error) => { %>
+              <li><%= error %></li>
+              <% }) %>
+            </ul>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!--/.contact-section-->
 
     <%- include('includes/footer') %>
+    <!--/.footer-section-->
+ 
+    <%- include('includes/scrollup') %>
+    <!--scrollup-->
+
+    <%- include('includes/toggle-theme') %>
+    <!-- Switch Button -->
+
+    <!--jQuery Lib-->
+    <%- include('includes/scripts') %>
   </body>
 </html>

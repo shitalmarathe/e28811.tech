@@ -93,8 +93,8 @@ app.post("/register", (req, res) => {
   if (username && username.length < 4) {
     errors.push("Username must contain atleast 4 characters");
   }
-  if (username && username.length > 12) {
-    errors.push("Username must not exceed 12 characters");
+  if (username && username.length > 15) {
+    errors.push("Username must not exceed 15 characters");
   }
   if (username && !username.match(/^[a-zA-Z0-9]+$/)) {
     errors.push("Username can't contain special characters");
