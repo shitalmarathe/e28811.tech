@@ -1,51 +1,115 @@
+
 <!DOCTYPE html>
-<html lang="en">
-  <%- include('includes/head') %>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+  <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+  <!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <html class="no-js" lang="en">
+    <!--<![endif]-->
+    <%- include('includes/main-head', {title: 'Login'}) %>
   <body>
-    <%- include('includes/header') %>
-
-    <main>
-      <% if(errors.length > 0) { %>
-      <p><mark style="background: tomato">Errors</mark></p>
-      <ul>
-        <% errors.forEach((error) => { %>
-        <li><%= error %></li>
-        <% }) %>
-      </ul>
-      <% } %>
-
-      <form action="/create-paper" method="POST">
-        <fieldset>
-          <legend>Create Research Paper</legend>
-
-          <label for="title">Title</label>
-          <br />
-          <input
-            type="text"
-            id="title"
-            name="title"
-            autocomplete="off"
-            required
-          />
-          <br />
-
-            <label for="body">Body</label>
-            <br />
-            <textarea 
-            name="body" 
-            id="body" 
-            autocomplete="off" 
-            class="editor"
-            required></textarea>
+    <!-- /.site-preloader -->
+    <%- include('includes/site-preloader') %> <%-
+    include('includes/main-header') %>
 
 
-          <br />
+ 
 
-          <button type="submit">Publish</button>
-        </fieldset>
-      </form>
-    </main>
+    <!--/.main-header-->
+
+
+    <div id="popup-search-box">
+      <div class="box-inner-wrap d-flex align-items-center">
+          <form id="form" action="#" method="get" role="search">
+              <input id="popup-search" type="text" name="s" placeholder="Type keywords here...">
+              <button id="popup-search-button" type="submit" name="submit">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 14.811 14.811">
+                      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" transform="translate(-2.25 -2.25)">
+                          <circle cx="5.5" cy="5.5" r="5.5" data-name="Ellipse 7" transform="translate(3 3)"></circle>
+                          <path d="m16 16-3.142-3.142"></path>
+                      </g>
+                  </svg>
+              </button>
+          </form>
+          <div class="search-close">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="24" viewBox="0 -960 960 960" width="24">
+                  <path d="M256-213.847 213.847-256l224-224-224-224L256-746.153l224 224 224-224L746.153-704l-224 224 224 224L704-213.847l-224-224-224 224Z" />
+              </svg>
+          </div>
+      </div>
+  </div>
+  <!--/.popup-search-box-->
+
+  <div id="searchbox-overlay"></div>
+  <!--/.searchbox-overlay-->
+
+  <section class="subscribe-section padding-bottom">
+      <div class="container">
+          <div class="row">
+              <div class="col-lg-8 offset-lg-2">
+                  <div class="subscribe-page-inner">
+                      <div class="subscribe-img"><img src="assets/img/post-7.jpg" alt="img"></div>
+                      <div class="subscribe-wrap">
+                          <h2>Create Research Paper</h2>
+                          <h3></h3>
+                          <% if(errors.length > 0) { %>
+                            <p><mark style="background: tomato">Errors</mark></p>
+                            <ul>
+                              <% errors.forEach((error) => { %>
+                              <li><%= error %></li>
+                              <% }) %>
+                            </ul>
+                            <% } %>
+                            <br/>
+                          <form action="/create-paper" method="POST">
+                              <div class="mc-fields">
+                                <label for="title">Title</label>
+                                  <br />
+                                  <input type="text"
+                                   id="title"
+                                    class="form-control"  
+                                    name="title" 
+                                    placeholder="Title"
+                                    autocomplete="off"
+                                    >
+                                  <br/>
+                              </div>
+                              <div class="mc-fields">
+                                <label for="body">Body</label>
+                                  <br />
+                                  <textarea
+                                   id="body"
+                                    class="form-control"  
+                                    name="body" 
+                                    placeholder="body"
+                                    autocomplete="off"
+                                    ></textarea>
+                                     <br/>
+                                  <button class="default-btn text-anim" type="submit">Publish</button>
+                              </div>
+                              <div class="clearfix"></div>
+                              <div id="mc-form-messages" class="alert" role="alert"></div>
+                          </form>
+                          <p>Don't worry, we don't spam.</p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+  <!--/.subscribe-section-->
+
 
     <%- include('includes/footer') %>
+     <!--/.footer-section-->
+ 
+     <%- include('includes/scrollup') %>
+     <!--scrollup-->
+ 
+     <%- include('includes/toggle-theme') %>
+     <!-- Switch Button -->
+ 
+     <!--jQuery Lib-->
+     <%- include('includes/scripts') %>
   </body>
 </html>
