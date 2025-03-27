@@ -5,16 +5,15 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "dev": "node --watch --env-file=.env server.js",
-    "start": "node server.js",
-     "clear": "rm -rf *.db *.db-shm *.db-wal"
+    "dev": "bun --watch --env-file=.env server.js",
+    "start": "bun server.js",
+    "clear": "rm -rf *.db *.db-shm *.db-wal *.sqlite *.sqlite-shm *.sqlite-wal"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
-    "better-sqlite3": "^11.8.1",
     "cookie-parser": "^1.4.7",
     "ejs": "^3.1.10",
     "express": "^4.21.2",

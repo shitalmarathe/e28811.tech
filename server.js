@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken";
  import { marked } from "marked";
  import { db } from "./lib/db.js";
 
-const PORT = process.env.PORT || 3000; // Getting port number from .env
+const PORT = Bun.env.PORT || 3000; // Getting port number from .env
 
 
 const app = express();
@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: false })); // Parse form data
 app.use((req, res, next) => {
 // Try to decode incoming cookie
 try {
-  const decoded = jwt.verify(req.cookies.user, process.env.JWTSECRET);
+  const decoded = jwt.verify(req.cookies.user, Bun.env.JWTSECRET);
   const { userId, username } = decoded;
   req.user = { userId, username };
 } catch (err) {
@@ -151,7 +151,7 @@ app.post("/register", (req, res) => {
       username: username,
       exp: Date.now() / 1000 + 60 * 60 * 24 * 7,
     },
-    process.env.JWTSECRET
+    Bun.env.JWTSECRET
   );
 
   // Send back a cookie to the user
