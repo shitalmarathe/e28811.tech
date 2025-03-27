@@ -1,12 +1,11 @@
-
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
-  <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
-  <!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
-  <!--[if gt IE 8]><!-->
-  <html class="no-js" lang="en">
-    <!--<![endif]-->
-    <%- include('includes/main-head', {title: 'Login'}) %>
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+  <!--<![endif]-->
+  <%- include('includes/main-head', {title: 'Login'}) %>
   <body>
     <!-- /.site-preloader -->
     <%- include('includes/site-preloader') %> <%-
@@ -14,100 +13,136 @@
 
     <!--/.main-header-->
 
-
     <div id="popup-search-box">
       <div class="box-inner-wrap d-flex align-items-center">
-          <form id="form" action="#" method="get" role="search">
-              <input id="popup-search" type="text" name="s" placeholder="Type keywords here...">
-              <button id="popup-search-button" type="submit" name="submit">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 14.811 14.811">
-                      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" transform="translate(-2.25 -2.25)">
-                          <circle cx="5.5" cy="5.5" r="5.5" data-name="Ellipse 7" transform="translate(3 3)"></circle>
-                          <path d="m16 16-3.142-3.142"></path>
-                      </g>
-                  </svg>
-              </button>
-          </form>
-          <div class="search-close">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="24" viewBox="0 -960 960 960" width="24">
-                  <path d="M256-213.847 213.847-256l224-224-224-224L256-746.153l224 224 224-224L746.153-704l-224 224 224 224L704-213.847l-224-224-224 224Z" />
-              </svg>
-          </div>
+        <form id="form" action="#" method="get" role="search">
+          <input
+            id="popup-search"
+            type="text"
+            name="s"
+            placeholder="Type keywords here..."
+          />
+          <button id="popup-search-button" type="submit" name="submit">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 14.811 14.811"
+            >
+              <g
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                transform="translate(-2.25 -2.25)"
+              >
+                <circle
+                  cx="5.5"
+                  cy="5.5"
+                  r="5.5"
+                  data-name="Ellipse 7"
+                  transform="translate(3 3)"
+                ></circle>
+                <path d="m16 16-3.142-3.142"></path>
+              </g>
+            </svg>
+          </button>
+        </form>
+        <div class="search-close">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            height="24"
+            viewBox="0 -960 960 960"
+            width="24"
+          >
+            <path
+              d="M256-213.847 213.847-256l224-224-224-224L256-746.153l224 224 224-224L746.153-704l-224 224 224 224L704-213.847l-224-224-224 224Z"
+            />
+          </svg>
+        </div>
       </div>
-  </div>
-  <!--/.popup-search-box-->
+    </div>
+    <!--/.popup-search-box-->
 
-  <div id="searchbox-overlay"></div>
-  <!--/.searchbox-overlay-->
+    <div id="searchbox-overlay"></div>
+    <!--/.searchbox-overlay-->
 
-  <section class="subscribe-section padding-bottom">
+    <section class="subscribe-section padding-bottom">
       <div class="container">
-          <div class="row">
-              <div class="col-lg-8 offset-lg-2">
-                  <div class="subscribe-page-inner">
-                      <div class="subscribe-img"><img src="/assets/img/post-7.jpg" alt="img"></div>
-                      <div class="subscribe-wrap">
-                          <h2>Edit existing Research Paper</h2>
-                          <h3>Reviewing and Revising the Manuscript</h3>
+        <div class="row">
+          <div class="col-12 offset-lg-2">
+            <div class="subscribe-page-inner">
+              <div class="subscribe-wrap" style="width: 100%">
+                <h2>Edit existing Research Paper</h2>
+                <h3>Reviewing and Revising the Manuscript</h3>
 
-                          <% if(errors.length > 0) { %>
-                            <p><mark style="background: tomato">Errors</mark></p>
-                            <ul>
-                              <% errors.forEach((error) => { %>
-                              <li><%= error %></li>
-                              <% }) %>
-                            </ul>
-                            <% } %>
-                            
-                            <br/>
-                          <form action="/edit-paper/<%= paper.id %>" method="POST">
-                              <div class="mc-fields">
-                                <label for="title">Title</label>
-                                  <br />
-                                  <input type="text"
-                                   id="title"
-                                    class="form-control"  
-                                    name="title" 
-                                    placeholder="Title"
-                                    autocomplete="off"
-                                    value="<%= paper.body %>">
-                                  <br/>
-                              </div>
-                              <div class="mc-fields">
-                                <label for="body">Body</label>
-                                  <br />
-                                  <textarea
-                                   id="body"
-                                    class="form-control"  
-                                    name="body" 
-                                    placeholder="body"
-                                     autocomplete="off"><%= paper.body %></textarea>
-                                     <br/>
-                                  <button class="default-btn text-anim" type="submit">Save Changes</button>
-                              </div>
-                              <div class="clearfix"></div>
-                              <div id="mc-form-messages" class="alert" role="alert"></div>
-                          </form>
-                          <p> Structural and Content Editing</p>
-                      </div>
+                <% if(errors.length > 0) { %>
+                <p><mark style="background: tomato">Errors</mark></p>
+                <ul>
+                  <% errors.forEach((error) => { %>
+                  <li><%= error %></li>
+                  <% }) %>
+                </ul>
+                <% } %>
+                <br />
+                <form action="/edit-paper/<%= paper.id %>" method="POST">
+                  <div class="mc-fields">
+                    <label for="title">Title</label>
+                    <br />
+                    <input
+                      type="text"
+                      id="title"
+                      class="form-control"
+                      name="title"
+                      placeholder="Enter title"
+                      autocomplete="off"
+                      value="<%= paper.body %>">
+                    
+                    <br />
                   </div>
+                  <div class="mc-fields">
+                    <label for="body">Body</label>
+                    <br />
+                    <textarea
+                      id="body"
+                      class="form-control"
+                      name="body"
+                      placeholder="Supports markdown"
+                      autocomplete="off"
+                      style="height: 20rem"
+                    ><%= paper.body %></textarea>
+                    <br />
+                    <button
+                      class="default-btn text-anim"
+                      type="submit"
+                      data-text="Publish"
+                      >Publish</button
+                    >
+                  </div>
+                  <div class="clearfix"></div>
+                  <div id="mc-form-messages" class="alert" role="alert"></div>
+                </form>
+                <p> Structural and Content Editing</p>
               </div>
+            </div>
           </div>
+        </div>
       </div>
-  </section>
-  <!--/.subscribe-section-->
-
+    </section>
+    <!--/.subscribe-section-->
 
     <%- include('includes/footer') %>
-     <!--/.footer-section-->
- 
-     <%- include('includes/scrollup') %>
-     <!--scrollup-->
- 
-     <%- include('includes/toggle-theme') %>
-     <!-- Switch Button -->
- 
-     <!--jQuery Lib-->
-     <%- include('includes/scripts') %>
+    <!--/.footer-section-->
+
+    <%- include('includes/scrollup') %>
+    <!--scrollup-->
+
+    <%- include('includes/toggle-theme') %>
+    <!-- Switch Button -->
+
+    <!--jQuery Lib-->
+    <%- include('includes/scripts') %>
   </body>
 </html>
