@@ -29,7 +29,7 @@
          <div class="row">
            <div class="col-lg-8 offset-lg-2">
              <div class="single-post-thumb">
-               <img src="/assets/img/post-2.jpg" alt="thumb" />
+               <img src="<%= paper.image %>" alt="thumb" />
              </div>
              <header class="entry-header">
                <ul class="post-meta">
@@ -80,8 +80,8 @@
                       <article>
                         <div class="post-card horizontal-card img-hover-move">
                           <div class="post-thumb media">
-                            <a href="single.html">
-                              <img src="/assets/img/post-1.jpg" alt="thumb" />
+                            <a href="/paper/<%= paper.id %>">
+                              <img src="<%= paper.image %>" alt="thumb" />
                             </a>
                           </div>
                           <div class="post-content">

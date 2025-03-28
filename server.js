@@ -9,6 +9,7 @@ import jwt from "jsonwebtoken";
  import { db } from "./lib/db.js";
 
 const PORT = Bun.env.PORT || 3000; // Getting port number from .env
+const CF_AI_URL = `https://api.cloudflare.com/client/v4/accounts/${Bun.env.ACCOUNT_ID}/ai/run/${Bun.env.MODEL_NAME}`;
 
 
 const app = express();
@@ -379,7 +380,7 @@ app.post("/delete-paper/:id", mustBeLoggedIn, (req, res) => {
   return res.redirect("/");
 });
 
-app.post("/create-paper", mustBeLoggedIn, (req, res) => {
+app.post("/create-paper", mustBeLoggedIn, async(req, res) => {
   const errors = postValidation(req);
 
   if (errors.length) {
@@ -389,13 +390,30 @@ app.post("/create-paper", mustBeLoggedIn, (req, res) => {
 
   // Save into database
   const statement = db.prepare(
-    `INSERT INTO papers (title, body, authorid, createdDate) VALUES (?, ?, ?, ?)`
+    `INSERT INTO papers (title, body, authorid, createdDate, image) VALUES (?,?, ?, ?, ?)`
   );
+
+
+   // AI Image Generation
+   const response = await fetch(CF_AI_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${Bun.env.CLOUDFLARE_API_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      prompt: req.body.title,
+    }),
+  });
+  const data = await response.json();
+
+
   const result = statement.run(
     req.body.title,
     req.body.body,
     req.user.userId,
-    new Date().toISOString()
+    new Date().toISOString(),
+    `data:image/jpeg;base64,` + data.result.image
   );
 
   // Redirect user to newly created paper
