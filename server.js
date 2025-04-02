@@ -312,7 +312,13 @@ app.get("/paper/:id", (req, res) => {
 
   const isAuthor = paper.authorid === req.user.userId;
 
-  return res.render("single-paper", { paper, isAuthor });
+    // Get comments
+    const commentsStatement = db.prepare(
+      `SELECT comments.*, users.username FROM comments INNER JOIN users ON comments.authorid = users.id WHERE comments.paperid = ? ORDER BY comments.createdDate DESC`
+    );
+    const comments = commentsStatement.all(req.params.id);
+  
+    return res.render("single-paper", { paper, isAuthor, comments });
 });
 
 app.get("/edit-paper/:id", mustBeLoggedIn, (req, res) => {
