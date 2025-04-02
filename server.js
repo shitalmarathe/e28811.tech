@@ -425,6 +425,39 @@ app.post("/create-paper", mustBeLoggedIn, async(req, res) => {
   return res.redirect(`/paper/${realPost.id}`);
 });
 
+// MARK: Comment functionality
+app.post("/paper/:id/comment", mustBeLoggedIn, (req, res) => {
+  const { content } = req.body;
+  const errors = [];
+
+  // Basic validation
+  if (typeof content !== "string" || !content.trim()) {
+    errors.push("Comment cannot be empty");
+  }
+
+  // If there are no errors
+  if (errors.length === 0) {
+    const statement = db.prepare(
+      `INSERT INTO comments (content, createdDate, authorid, paperid) VALUES (?, ?, ?, ?)`
+    );
+    statement.run(
+      sanitizeHtml(content, {
+        // allowedTags: ["a", "b", "strong", "em", "i", "mark"],
+        allowedTags: [],
+        allowedAttributes: {
+          // a: ["href", "target"],
+        },
+      }),
+      new Date().toISOString(),
+      req.user.userId,
+      req.params.id
+    );
+  }
+
+  return res.redirect(`/paper/${req.params.id}`);
+});
+
+
 app.listen(PORT, () => {
   console.log(`Server fired up 🔥 on PORT: ${PORT}`);
 });
