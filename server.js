@@ -11,7 +11,7 @@ import jwt from "jsonwebtoken";
  
 
 
-const PORT = Bun.env.PORT || 3000; // Getting port number from .env
+const PORT = Bun.env.PORT || 7860; // Getting port number from .env
 const CF_AI_URL = `https://api.cloudflare.com/client/v4/accounts/${Bun.env.ACCOUNT_ID}/ai/run/${Bun.env.MODEL_NAME}`;
 
 
